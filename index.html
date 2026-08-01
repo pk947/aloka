@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALOKA OPTICIANS — See Clearly, Hear Fully.</title>
+<meta name="description" content="ALOKA OPTICIANS — Leading eye care, optical eyewear, and hearing solutions in Sri Lanka.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- jsPDF & AutoTable CDN for PDF Reports -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<!-- Chart.js CDN for Visual Business Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* =========================================================
+   ALOKA OPTICIANS — Design Tokens & Styling
+========================================================= */
+:root{
+  --ink-navy:   #101E2B;
+  --iris-teal:  #1F8A82;
+  --iris-teal-dark: #146059;
+  --soft-mist:  #F4F8F7;
+  --coral-flare:#4B5D63;
+  --slate:      #4B5D63;
+  --pale-ring:  #DCE8E6;
+  --white:      #FFFFFF;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Work Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --container: 1180px;
+  --radius: 14px;
+  --ease: cubic-bezier(.22,.9,.28,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family: var(--font-body);
+  color: var(--ink-navy);
+  background: var(--soft-mist);
+  line-height:1.55;
+  overflow-x:hidden;
+}
+img, video{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; }
+h1,h2,h3{ font-family:var(--font-display); font-weight:500; line-height:1.1; }
+section{ padding: 96px 24px; }
+.section-head{ max-width:640px; margin:0 auto 48px; text-align:center; }
+.section-head h2{ font-size:clamp(28px,4vw,42px); margin-top:8px; }
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--iris-teal-dark);
+}
+
+/* SPA Page View Toggle Controls */
+.spa-page {
+  display: none;
+  animation: fadeIn 0.4s var(--ease);
+}
+.spa-page.active-page {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:12px 24px; border-radius:999px; font-weight:600; font-size:14px;
+  transition: transform .25s var(--ease), background .25s, color .25s, border-color .25s;
+  white-space:nowrap; cursor: pointer; border: none; gap: 8px;
+}
+.btn-primary{ background:var(--coral-flare); color:var(--white); }
+.btn-primary:hover{ transform:translateY(-2px); background:#ff7d63; }
+.btn-whatsapp{ background:#25D366; color:var(--white); }
+.btn-whatsapp:hover{ transform:translateY(-2px); background:#20bd5a; }
+.btn-outline{ border:1.5px solid rgba(255,255,255,.7); color:var(--white); background: transparent; }
+.btn-outline:hover{ background:rgba(255,255,255,.12); transform:translateY(-2px); }
+.btn-ghost{ border:1.5px solid var(--ink-navy); color:var(--ink-navy); padding:10px 22px; font-size:14px; background: transparent; }
+.btn-ghost:hover{ background:var(--ink-navy); color:var(--white); }
+.btn-danger{ background: #dc3545; color: var(--white); padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+.btn-danger:hover{ background: #bd2130; }
+.btn-success{ background: #28a745; color: var(--white); }
+.btn-success:hover{ background: #218838; }
+.btn-sm{ padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+.text-link{ font-weight:600; font-size:14px; color:var(--iris-teal-dark); cursor: pointer; display: inline-block; }
+.text-link:hover{ color:var(--coral-flare); }
+
+/* Toast Notification */
+.toast-msg {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--ink-navy); color: var(--white); padding: 12px 24px; border-radius: 50px;
+  font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000;
+  opacity: 0; transition: all 0.4s var(--ease); pointer-events: none; border: 1px solid var(--iris-teal);
+}
+.toast-msg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* Cart Button & Badge */
+.cart-btn-wrapper { position: relative; display: inline-block; }
+.cart-badge {
+  position: absolute; top: -6px; right: -6px; background: var(--coral-flare);
+  color: var(--white); font-size: 11px; font-weight: 700; width: 20px; height: 20px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+
+/* Load-in overlay */
+.iris-overlay{ position:fixed; inset:0; z-index:999; pointer-events:none; background:var(--ink-navy); }
+.iris-svg{ width:100%; height:100%; display:block; }
+.blade{ fill:var(--ink-navy); transform-origin:50px 50px; transition:none; }
+.iris-overlay.is-open .blade{ transition: transform .9s var(--ease); }
+.iris-overlay.is-open #irisBlades polygon:nth-child(odd){ transform: scale(2.6) rotate(8deg); }
+.iris-overlay.is-open #irisBlades polygon:nth-child(even){ transform: scale(2.6) rotate(-8deg); }
+.iris-overlay.is-hidden{ display:none; }
+
+/* Header */
+.site-header{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  transition: background .3s var(--ease), box-shadow .3s var(--ease), padding .3s var(--ease);
+  padding: 18px 0;
+}
+.site-header.is-scrolled{
+  background: rgba(244,248,247,.95); backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(16,30,43,.06); padding: 10px 0;
+}
+.header-inner{
+  max-width: var(--container); margin:0 auto; padding:0 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+}
+.brand{ display:flex; align-items:center; gap:12px; color:var(--white); cursor: pointer; }
+.site-header.is-scrolled .brand{ color:var(--ink-navy); }
+.brand-mark{ display:flex; align-items:center; }
+.brand-logo-img{ height: 42px; width: auto; max-width: 160px; object-fit: contain; }
+.brand-name{ font-family:var(--font-display); font-size:22px; font-weight:600; display:flex; flex-direction:column; line-height:1.1; }
+.brand-name-sub{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:400; opacity:.75; }
+
+.main-nav ul{ display:flex; gap:24px; }
+.main-nav a{ font-size:14.5px; font-weight:500; color:var(--white); padding:8px 0; position:relative; cursor: pointer; }
+.site-header.is-scrolled .main-nav a{ color:var(--ink-navy); }
+.main-nav a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
+  background:var(--coral-flare); transform:scaleX(0); transform-origin:left; transition:transform .25s var(--ease);
+}
+.main-nav a:hover::after, .main-nav a.is-active::after{ transform:scaleX(1); }
+.has-dropdown{ position:relative; }
+.dropdown{
+  position:absolute; top:100%; left:0; background:var(--white); border-radius:12px;
+  box-shadow:0 20px 40px rgba(16,30,43,.14); padding:10px; min-width:210px;
+  opacity:0; visibility:hidden; transform:translateY(8px); transition: all .2s var(--ease);
+}
+.has-dropdown:hover .dropdown{ opacity:1; visibility:visible; transform:translateY(4px); }
+.dropdown li a{ color:var(--ink-navy) !important; padding:9px 12px; border-radius:8px; display:block; }
+.dropdown li a:hover{ background:var(--soft-mist); color:var(--iris-teal) !important; }
+.dropdown li a::after{ display:none; }
+
+.header-actions{ display:flex; align-items:center; gap:12px; }
+.site-header:not(.is-scrolled) .btn-ghost{ border-color:rgba(255,255,255,.7); color:var(--white); }
+.nav-toggle{ display:none; flex-direction:column; gap:5px; background:none; border:0; cursor:pointer; }
+.nav-toggle span{ width:22px; height:2px; background:currentColor; color:var(--white); }
+.site-header.is-scrolled .nav-toggle span{ color:var(--ink-navy); }
+
+/* Hero */
+.hero{ position:relative; height:100vh; min-height:680px; display:flex; align-items:center; overflow:hidden; }
+.hero-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform: scale(1.03); transition: transform 8s ease-out; }
+.hero:hover .hero-video{ transform: scale(1.08); }
+.hero-scrim{ position:absolute; inset:0; background: linear-gradient(180deg, rgba(16,30,43,.65) 0%, rgba(16,30,43,.45) 45%, rgba(16,30,43,.88) 100%); }
+.hero-content{ position:relative; z-index:2; max-width:var(--container); margin:0 auto; padding:0 24px; color:var(--white); width: 100%; }
+.hero-grid-wrapper { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; }
+.hero-title{ font-size:clamp(38px,6vw,72px); max-width:15ch; animation: heroSlideUp 0.8s var(--ease); }
+.hero-title em{ font-style:italic; color:var(--iris-teal); }
+.hero-sub{ max-width:48ch; margin:22px 0 34px; font-size:17px; color:rgba(255,255,255,.9); }
+.hero-actions{ display:flex; gap:16px; flex-wrap:wrap; }
+
+.hero-badge-card {
+  background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px; padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.35); animation: floatAnim 4s ease-in-out infinite;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.hero-badge-media { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; background: #000; }
+.hero-badge-tag {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px;
+  font-weight: 600; color: var(--white); background: var(--coral-flare); padding: 6px 14px; border-radius: 20px; align-self: flex-start;
+}
+
+@keyframes heroSlideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+@keyframes floatAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* Eyewear Video Reel Banner */
+.eyewear-reel-section { background: var(--ink-navy); color: var(--white); padding: 80px 24px; position: relative; overflow: hidden; }
+.reel-grid { max-width: var(--container); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.reel-card { position: relative; border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/5; box-shadow: 0 16px 36px rgba(0,0,0,0.3); cursor: pointer; }
+.reel-card video, .reel-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+.reel-card:hover video, .reel-card:hover img { transform: scale(1.08); }
+.reel-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(16,30,43,0.9) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; }
+.reel-badge { font-family: var(--font-mono); font-size: 11px; color: var(--iris-teal); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.reel-title { font-size: 20px; font-weight: 500; color: var(--white); }
+
+/* Products Filter & Grid */
+.product-filter { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+.filter-btn { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--pale-ring); background: var(--white); cursor: pointer; font-family: var(--font-mono); font-size: 13px; transition: all .2s var(--ease); }
+.filter-btn.active, .filter-btn:hover { background: var(--iris-teal); color: var(--white); border-color: var(--iris-teal); }
+
+.product-grid{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px; }
+.product-card{ background:var(--white); border-radius:var(--radius); padding:18px; text-align:left; box-shadow:0 10px 30px rgba(16,30,43,.06); display: flex; flex-direction: column; justify-content: space-between; transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.product-card:hover{ transform:translateY(-6px); box-shadow:0 20px 40px rgba(16,30,43,.12); }
+.product-media{ border-radius:10px; overflow:hidden; aspect-ratio:6/7; margin-bottom:14px; background:#e0e0e0; position: relative; }
+.product-media img, .product-media video{ width:100%; height:100%; object-fit:cover; transition: transform .5s var(--ease); }
+.product-media video { position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s ease; }
+.product-card:hover .product-media img{ transform:scale(1.06); }
+.product-card:hover .product-media video{ opacity: 1; transform:scale(1.06); }
+.product-card h3{ font-size:18px; margin-bottom:4px; }
+.product-card p{ font-size:13px; color:var(--slate); margin-bottom:8px; }
+.product-price{ font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--iris-teal-dark); margin-bottom: 12px; }
+.product-actions{ display: flex; gap: 8px; flex-direction: column; }
+
+/* Services */
+.services{ background:var(--ink-navy); color:var(--white); }
+.services-inner{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:.85fr 1.15fr; gap:64px; align-items:start; }
+.services-copy h2{ font-size:clamp(28px,3.6vw,40px); margin:8px 0 18px; }
+.services-lede{ color:rgba(255,255,255,.72); margin-bottom:28px; max-width:42ch; }
+.services-grid{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:rgba(255,255,255,.1); border-radius:var(--radius); overflow:hidden; }
+.service-card{ background:var(--ink-navy); padding:28px; transition: background .3s; }
+.service-card:hover{ background: #152737; }
+.service-index{ font-family:var(--font-mono); font-size:12px; color:var(--iris-teal); }
+.service-card h3{ font-size:18px; margin:10px 0 8px; }
+.service-card p{ font-size:13.5px; color:rgba(255,255,255,.68); }
+
+/* Branch network & Sri Lanka Map Sketch */
+.network-sub{ font-family:var(--font-body); font-size:15px; color:var(--slate); margin-top:12px; }
+.network-body{ max-width:var(--container); margin:0 auto; }
+.map-container { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; background: var(--white); padding: 36px; border-radius: var(--radius); box-shadow: 0 10px 30px rgba(16,30,43,.06); }
+.sl-map-wrapper { position: relative; width: 100%; max-width: 380px; margin: 0 auto; background: var(--soft-mist); border-radius: 16px; padding: 20px; display: flex; justify-content: center; align-items: center; }
+.sl-map-svg { width: 100%; height: auto; filter: drop-shadow(0px 8px 16px rgba(31,138,130,0.15)); }
+.map-pin { cursor: pointer; transition: transform 0.3s ease; }
+.map-pin:hover { transform: scale(1.25); }
+.pin-pulse { animation: pulse 2s infinite; transform-origin: center; }
+@keyframes pulse { 0% { r: 6; opacity: 0.9; } 50% { r: 14; opacity: 0.2; } 100% { r: 6; opacity: 0.9; } }
+
+.branch-single-card { background: var(--soft-mist); padding: 28px; border-radius: var(--radius); border-left: 5px solid var(--coral-flare); }
+.branch-single-card h3 { font-size: 22px; color: var(--ink-navy); margin-bottom: 12px; }
+.branch-single-card p { font-size: 15px; color: var(--slate); margin-bottom: 8px; }
+
+/* Booking CTA */
+.booking{ background:var(--soft-mist); }
+.booking-inner{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr .8fr; gap:48px; align-items:center; background:var(--white); border-radius:24px; padding:56px; box-shadow:0 20px 50px rgba(16,30,43,.06); }
+.booking-copy h2{ font-size:clamp(26px,3.4vw,36px); margin:8px 0 16px; }
+.booking-copy p{ color:var(--slate); margin-bottom:26px; max-width:40ch; }
+.booking-media { position: relative; border-radius: 18px; overflow: hidden; box-shadow:0 20px 40px rgba(16,30,43,.15); }
+.booking-media video{ width:100%; max-height:400px; object-fit: cover; }
+
+/* Interactive Form & Modals */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(16,30,43,0.7); z-index: 1000;
+  display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.modal-backdrop.active { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: var(--white); padding: 32px; border-radius: var(--radius); width: 90%; max-width: 520px;
+  transform: translateY(20px); transition: transform .3s; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-backdrop.active .modal-box { transform: translateY(0); }
+.modal-box h3 { font-size: 24px; margin-bottom: 8px; }
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-group label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 6px; color: var(--ink-navy); }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px; border-radius: 8px; border: 1.5px solid var(--pale-ring); font-family: inherit; font-size: 14px;
+}
+.form-group input[type="file"] { background: var(--soft-mist); padding: 8px; cursor: pointer; }
+
+/* Owner Portal - User-Friendly Styling */
+.admin-modal-box { max-width: 1100px; padding: 36px; border-radius: 20px; width: 95%; }
+.admin-modal-box.full-screen-admin { max-width: 98vw; width: 98vw; height: 94vh; max-height: 94vh; overflow-y: auto; }
+.admin-header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--pale-ring); padding-bottom: 16px; margin-bottom: 24px; }
+.admin-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--pale-ring); margin-bottom: 24px; flex-wrap: wrap; }
+.admin-tab-btn { padding: 12px 18px; border: none; background: #eef4f3; border-radius: 10px 10px 0 0; font-weight: 600; font-size: 14px; cursor: pointer; color: var(--slate); transition: all 0.2s; }
+.admin-tab-btn.active { background: var(--iris-teal); color: var(--white); }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+.admin-card-section { background: var(--soft-mist); border: 1px solid var(--pale-ring); padding: 24px; border-radius: 16px; margin-bottom: 24px; }
+.admin-card-section h4 { font-size: 18px; color: var(--ink-navy); margin-bottom: 12px; border-bottom: 1px solid var(--pale-ring); padding-bottom: 8px; }
+.admin-item-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--white); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--pale-ring); box-shadow: 0 2px 6px rgba(0,0,0,0.02); gap: 16px; }
+.admin-item-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #ddd; }
+
+/* Stock & Reports Specific Table & UI Styling */
+.stock-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.stock-stat-card { background: var(--white); border: 1px solid var(--pale-ring); padding: 16px; border-radius: 12px; text-align: center; }
+.stock-stat-card .val { font-size: 22px; font-weight: 700; color: var(--iris-teal-dark); font-family: var(--font-mono); }
+.stock-stat-card .lbl { font-size: 12px; color: var(--slate); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+
+.stock-table-wrapper { overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--pale-ring); }
+.stock-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; }
+.stock-table th { background: #e8f2f0; color: var(--ink-navy); padding: 12px; font-weight: 600; border-bottom: 2px solid var(--pale-ring); white-space: nowrap; }
+.stock-table td { padding: 10px 12px; border-bottom: 1px solid var(--pale-ring); vertical-align: middle; }
+.stock-table tr:hover { background: #f9fcfc; }
+
+.badge-status { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; }
+.status-instock { background: #d4edda; color: #155724; }
+.status-lowstock { background: #fff3cd; color: #856404; }
+.status-outstock { background: #f8d7da; color: #721c24; }
+.status-ordered { background: #cce5ff; color: #004085; }
+
+/* Cart Items inside Modal */
+.cart-items-list { margin: 16px 0; max-height: 240px; overflow-y: auto; border-top: 1px solid var(--pale-ring); }
+.cart-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--pale-ring); }
+.cart-item-title { font-weight: 600; font-size: 14px; }
+.cart-item-price { font-family: var(--font-mono); font-size: 13px; color: var(--slate); }
+.cart-qty-ctrl { display: flex; align-items: center; gap: 8px; }
+.cart-qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--pale-ring); background: var(--white); cursor: pointer; }
+.cart-total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin: 20px 0 10px; }
+
+/* Dynamic News Styling */
+.news-grid{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.news-card { background: var(--white); border-radius: 12px; overflow: hidden; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; }
+.news-card img, .news-card video{ border-radius:8px; aspect-ratio:5/3.2; object-fit:cover; margin-bottom:14px; width: 100%; background: #000; }
+.news-date{ font-family:var(--font-mono); font-size:12px; color:var(--iris-teal-dark); margin-bottom:6px; }
+.news-card h3{ font-size:18px; font-weight:500; margin-bottom: 8px; }
+.news-card p{ font-size:13.5px; color: var(--slate); line-height: 1.4; }
+
+/* Contact CTA */
+.contact-cta{ background:var(--ink-navy); color:var(--white); text-align:center; }
+.contact-cta h2{ font-size:clamp(26px,3.6vw,38px); margin-bottom:40px; }
+.contact-grid{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.contact-value{ font-family:var(--font-mono); font-size:17px; margin-top:6px; }
+
+/* Footer */
+.site-footer{ background:#0B1620; color:rgba(255,255,255,.75); padding:64px 24px 24px; }
+.footer-inner{ max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr 2fr; gap:48px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,.1); }
+.footer-brand .brand-name{ font-family:var(--font-display); font-size:24px; color:var(--white); }
+.footer-brand p{ font-size:13.5px; margin:6px 0 18px; }
+.footer-social{ display:flex; gap:10px; }
+.footer-social a{ width:34px; height:34px; border:1px solid rgba(255,255,255,.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; }
+.footer-social a:hover{ background:var(--iris-teal); border-color:var(--iris-teal); }
+.footer-links{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.footer-links h4{ font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--white); margin-bottom:14px; }
+.footer-links a{ display:block; font-size:13.5px; margin-bottom:10px; cursor: pointer; }
+.footer-links a:hover{ color:var(--white); }
+.footer-bottom{ max-width:var(--container); margin:0 auto; display:flex; justify-content:space-between; padding-top:24px; font-size:12.5px; flex-wrap:wrap; gap:8px; }
+
+/* Back to top */
+.back-to-top{
+  position:fixed; right:24px; bottom:24px; width:46px; height:46px; border-radius:50%;
+  background:var(--ink-navy); color:var(--white); border:0; font-size:18px; cursor:pointer;
+  opacity:0; pointer-events:none; transition: all .3s var(--ease); z-index:80;
+}
+.back-to-top.is-visible{ opacity:1; pointer-events:auto; }
+.back-to-top:hover{ background:var(--iris-teal); transform:translateY(-3px); }
+
+/* Responsive */
+@media (max-width:1024px){
+  .hero-grid-wrapper { grid-template-columns: 1fr; }
+  .hero-badge-card { display: none; }
+  .reel-grid { grid-template-columns: 1fr; }
+  .product-grid{ grid-template-columns:repeat(3,1fr); }
+  .services-inner{ grid-template-columns:1fr; }
+  .booking-inner{ grid-template-columns:1fr; text-align:center; }
+  .booking-media{ order:-1; max-width:380px; margin:0 auto; }
+  .map-container { grid-template-columns: 1fr; }
+}
+@media (max-width:800px){
+  .main-nav{ position:fixed; top:0; right:0; height:100vh; width:min(320px,80vw);
+    background:var(--white); padding:100px 28px 28px; transform:translateX(100%);
+    transition: transform .35s var(--ease); box-shadow:-20px 0 40px rgba(16,30,43,.12);
+  }
+  .main-nav.is-open{ transform:translateX(0); }
+  .main-nav ul{ flex-direction:column; gap:6px; }
+  .main-nav a{ color:var(--ink-navy) !important; display:block; padding:12px 0; }
+  .dropdown{ position:static; opacity:1; visibility:visible; transform:none; box-shadow:none; display:none; padding-left:12px; }
+  .has-dropdown.is-open .dropdown{ display:block; }
+  .nav-toggle{ display:flex; }
+  .header-actions .btn-ghost{ display:none; }
+  .product-grid{ grid-template-columns:repeat(2,1fr); }
+  .news-grid{ grid-template-columns:1fr; }
+  .contact-grid{ grid-template-columns:1fr; gap:32px; }
+  .footer-inner{ grid-template-columns:1fr; }
+  .footer-links{ grid-template-columns:1fr 1fr; }
+  section{ padding:72px 20px; }
+}
+@media (max-width:480px){
+  .product-grid{ grid-template-columns:1fr; }
+  .booking-inner{ padding:32px 22px; }
+  .brand-logo-img{ height: 34px; }
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast-msg"></div>
+
+<!-- Aperture load-in overlay -->
+<div class="iris-overlay" id="irisOverlay" aria-hidden="true">
+  <svg viewBox="0 0 100 100" class="iris-svg">
+    <g id="irisBlades">
+      <polygon class="blade" points="50,50 50,-10 74,-10"/>
+      <polygon class="blade" points="50,50 74,-10 110,14"/>
+      <polygon class="blade" points="50,50 110,14 110,50"/>
+      <polygon class="blade" points="50,50 110,50 110,86"/>
+      <polygon class="blade" points="50,50 110,86 74,110"/>
+      <polygon class="blade" points="50,50 74,110 50,110"/>
+      <polygon class="blade" points="50,50 50,110 26,110"/>
+      <polygon class="blade" points="50,50 26,110 -10,86"/>
+      <polygon class="blade" points="50,50 -10,86 -10,50"/>
+      <polygon class="blade" points="50,50 -10,50 -10,14"/>
+      <polygon class="blade" points="50,50 -10,14 26,-10"/>
+      <polygon class="blade" points="50,50 26,-10 50,-10"/>
+    </g>
+  </svg>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a onclick="navigateTo('home')" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <img src="logo.jpeg" alt="Aloka Opticians Logo" class="brand-logo-img">
+      </span>
+      <span class="brand-name">ALOKA OPTICIANS<span class="brand-name-sub">Vision & Sound</span></span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a onclick="navigateTo('home')" class="nav-link is-active" data-page="home">Home</a></li>
+        <li><a onclick="navigateTo('about')" class="nav-link" data-page="about">About Us</a></li>
+        <li class="has-dropdown">
+          <a onclick="navigateTo('specialities')" class="nav-link" data-page="specialities">Specialities</a>
+          <ul class="dropdown">
+            <li><a onclick="navigateTo('specialities', 'optical')">Optical Needs</a></li>
+            <li><a onclick="navigateTo('specialities', 'contacts')">Contact Lenses</a></li>
+            <li><a onclick="navigateTo('specialities', 'investigations')">Eye Investigations</a></li>
+            <li><a onclick="navigateTo('specialities', 'sports')">Sports Vision</a></li>
+            <li><a onclick="navigateTo('specialities', 'hearing')">Hearing Solutions</a></li>
+          </ul>
+        </li>
+        <li><a onclick="navigateTo('products')" class="nav-link" data-page="products">Products</a></li>
+        <li><a onclick="navigateTo('network')" class="nav-link" data-page="network">Branches</a></li>
+        <li><a onclick="navigateTo('news')" class="nav-link" data-page="news">News</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Owner Portal Trigger Button -->
+      <button onclick="openOwnerPortal()" class="btn btn-ghost" style="padding: 10px 14px; border-color: var(--coral-flare); color: var(--coral-flare);">🔒 Owner Portal</button>
+      
+      <!-- Cart Drawer Trigger Button -->
+      <div class="cart-btn-wrapper">
+        <button onclick="openCartModal()" class="btn btn-ghost" style="padding: 10px 16px;">🛒 Cart</button>
+        <span class="cart-badge" id="cartCount">0</span>
+      </div>
+      <button onclick="openBookingModal()" class="btn btn-ghost">Book Test</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <div id="page-home" class="spa-page active-page">
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="header.mp4">
+        <source src="header.mp4" type="video/mp4">
+      </video>
+      <div class="hero-scrim"></div>
+      <div class="hero-content">
+        <div class="hero-grid-wrapper">
+          <div>
+            <p class="eyebrow">Est. 1992 · Sri Lanka</p>
+            <h1 class="hero-title" id="display-hero-title">See life clearly.<br><em>Hear</em> every moment.</h1>
+            <p class="hero-sub" id="display-hero-sub">Comprehensive optical eye care, designer eyewear, and digital hearing solutions from Sri Lanka's leading specialists.</p>
+            <div class="hero-actions">
+              <button onclick="openBookingModal()" class="btn btn-primary">Book Eye Test</button>
+              <button onclick="navigateTo('products')" class="btn btn-outline">Explore Eyewear</button>
+            </div>
+          </div>
+          
+          <div class="hero-badge-card" id="floatingEyewearSpotlight"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="eyewear-reel-section">
+      <div class="section-head" style="margin-bottom: 32px;">
+        <p class="eyebrow" style="color:var(--coral-flare);">Featured Eyewear in Motion</p>
+        <h2 style="color:var(--white);">Experience Our Craftsmanship</h2>
+      </div>
+      <div class="reel-grid" id="display-reel-grid"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Welcome to Aloka Opticians</p>
+        <h2>Clearer Vision for a Brighter Tomorrow</h2>
+      </div>
+      <div class="product-grid" id="display-highlights-grid"></div>
+    </section>
+  </div>
+
+  <!-- ==================== ABOUT PAGE ==================== -->
+  <div id="page-about" class="spa-page">
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Our Legacy</p>
+        <h2>Over 30 Years of Optical Excellence</h2>
+      </div>
+      <div style="max-width: var(--container); margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+        <div>
+          <p style="font-size: 17px; margin-bottom: 16px; color: var(--slate);">Founded in 1992, Aloka Opticians has transformed into Sri Lanka’s premier destination for vision and hearing care.</p>
+          <p style="margin-bottom: 24px;">Our mission is to bring world-class clinical care and stylish, comfortable eyewear to Sri Lanka through innovation and personal service.</p>
+          <button onclick="navigateTo('network')" class="btn btn-primary">Visit Our Branch</button>
+        </div>
+        <div>
+          <img src="https://images.unsplash.com/photo-1577202214328-c04b77cefb5d?auto=format&fit=crop&w=800&q=80" style="border-radius: var(--radius);" alt="Aloka Store Front">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SPECIALITIES PAGE ==================== -->
+  <div id="page-specialities" class="spa-page">
+    <section class="services">
+      <div class="services-inner">
+        <div class="services-copy">
+          <p class="eyebrow">Clinical Services</p>
+          <h2>High-quality care, backed by real expertise</h2>
+          <p class="services-lede">Our qualified optometrists and audiologists utilize state-of-the-art diagnostic equipment to deliver personalized care.</p>
+          <button onclick="openBookingModal()" class="btn btn-primary">Book Consultation</button>
+        </div>
+        <div class="services-grid">
+          <div class="service-card"><span class="service-index">01</span><h3>Optical Needs</h3><p>Custom prescription lenses fitted with extreme precision to designer frames.</p></div>
+          <div class="service-card"><span class="service-index">02</span><h3>Eye Investigations</h3><p>Advanced diagnostic imaging including glaucoma testing and digital visual field scans.</p></div>
+          <div class="service-card"><span class="service-index">03</span><h3>Contact Lenses</h3><p>Professional fitting consultations for astigmatism, daily disposables, and multifocals.</p></div>
+          <div class="service-card"><span class="service-index">04</span><h3>Sports Vision</h3><p>Specialized protective eyewear for active athletes requiring enhanced impact safety.</p></div>
+          <div class="service-card"><span class="service-index">05</span><h3>Vision Therapy</h3><p>Non-surgical visual training programs designed to fix binocular coordination disorders.</p></div>
+          <div class="service-card"><span class="service-index">06</span><h3>Hearing Solutions</h3><p>Free clinical audiometry checks and digital, invisible hearing aid fittings.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PRODUCTS PAGE ==================== -->
+  <div id="page-products" class="spa-page">
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Catalog</p>
+        <h2>Browse Eyewear & Accessories</h2>
+      </div>
+
+      <div class="product-filter">
+        <button class="filter-btn active" onclick="filterProducts('all', this)">All Items</button>
+        <button class="filter-btn" onclick="filterProducts('sunglasses', this)">Sunglasses</button>
+        <button class="filter-btn" onclick="filterProducts('spectacles', this)">Spectacles</button>
+        <button class="filter-btn" onclick="filterProducts('hearing', this)">Hearing Aids</button>
+        <button class="filter-btn" onclick="filterProducts('lenses', this)">Contact Lenses</button>
+      </div>
+
+      <div class="product-grid" id="catalog-grid"></div>
+    </section>
+  </div>
+
+  <!-- ==================== NETWORK PAGE ==================== -->
+  <div id="page-network" class="spa-page">
+    <section class="network">
+      <div class="section-head">
+        <p class="eyebrow">Store Location</p>
+        <h2>Our Official Branch</h2>
+        <p class="network-sub">Find us on the map of Sri Lanka below.</p>
+      </div>
+
+      <div class="network-body">
+        <div class="map-container">
+          <div class="sl-map-wrapper">
+            <svg class="sl-map-svg" viewBox="0 0 300 450" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#E0ECE9" stroke="#1F8A82" stroke-width="2.5" stroke-linejoin="round" d="M 130,25 C 140,20 155,30 160,45 C 170,70 185,90 195,120 C 210,160 225,200 220,250 C 215,290 200,340 180,380 C 160,410 140,430 120,425 C 95,420 85,380 80,350 C 75,310 65,270 70,230 C 75,190 70,150 85,110 C 95,85 110,60 115,40 Z"/>
+              <path fill="none" stroke="#B8D5D0" stroke-width="1" stroke-dasharray="4,4" d="M 120,60 C 130,120 140,180 135,260 C 130,320 150,370 140,400"/>
+              <g class="map-pin" transform="translate(88, 255)">
+                <circle class="pin-pulse" cx="0" cy="0" r="10" fill="#FF6A4D" />
+                <path d="M 0,0 C -6,-10 -8,-16 0,-26 C 8,-16 6,-10 0,0 Z" fill="#FF6A4D" stroke="#FFFFFF" stroke-width="1.5" />
+                <circle cx="0" cy="-18" r="3" fill="#FFFFFF" />
+                <rect x="12" y="-28" width="110" height="24" rx="6" fill="#101E2B" opacity="0.9" />
+                <text x="20" y="-12" fill="#FFFFFF" font-size="10" font-weight="bold" font-family="sans-serif">Boralesgamuwa</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="branch-single-card">
+            <span class="eyebrow" style="color:var(--coral-flare); margin-bottom:8px; display:block;">Main Outlet</span>
+            <h3>Boralesgamuwa Branch</h3>
+            <p><strong>📍 Address:</strong> 29 Lake Rd, Boralesgamuwa</p>
+            <p><strong>📞 Phone:</strong> +94 11 75 75 100</p>
+            <p><strong>🕒 Hours:</strong> Mon - Sat: 8:30 AM - 7:00 PM</p>
+            <div style="margin-top: 20px;">
+              <button class="btn btn-primary" onclick="openBookingModal()">Book Appointment Here</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== NEWS PAGE ==================== -->
+  <div id="page-news" class="spa-page">
+    <section class="news">
+      <div class="section-head">
+        <p class="eyebrow">News & Updates</p>
+        <h2>Articles & Community Initiatives</h2>
+      </div>
+      <div class="news-grid" id="display-news-grid"></div>
+    </section>
+  </div>
+
+  <section class="booking">
+    <div class="booking-inner">
+      <div class="booking-copy">
+        <p class="eyebrow">Online Booking</p>
+        <h2>Book Your Vision or Hearing Check-up</h2>
+        <p>Schedule your visit to our Boralesgamuwa outlet, and our expert clinicians will ensure your sight and hearing remain crystal clear.</p>
+        <button onclick="openBookingModal()" class="btn btn-primary">Schedule Appointment Now</button>
+      </div>
+      <div class="booking-media">
+        <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=600&q=80">
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-optometrist-examining-a-patient-41408-large.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-cta">
+    <div class="contact-inner">
+      <h2>We're here whenever you need us</h2>
+      <div class="contact-grid">
+        <div><p class="eyebrow">Phone Hotline</p><p class="contact-value">077 277 7288</p></div>
+        <div><p class="eyebrow">Email Enquiries</p><p class="contact-value">support@alokaopticians.lk</p></div>
+        <div><p class="eyebrow">Branch Location</p><p class="contact-value">29 Lake Rd, Boralesgamuwa</p></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name">ALOKA OPTICIANS</span>
+      <p>See clearly. Hear fully.</p>
+      <div class="footer-social">
+        <div class="footer-social">
+  <!-- Facebook -->
+  <a href="https://www.google.com/url?q=https://web.facebook.com/AlokaOpticians&sa=U&ved=2ahUKEwj1ioXVoICWAxWXjq8BHes0I0IQ9zB6BAg1EA0&usg=AOvVaw2udWpaQvd6ePpmjGp42HpD" aria-label="Facebook" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H7.5v-3H10V9.5C10 7.01 11.49 5.65 13.78 5.65c1.1 0 2.25.2 2.25.2v2.48h-1.27c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.45 3H13.13v6.8c4.56-.93 8-4.96 8-9.8z"/>
+    </svg>
+  </a>
+
+  <!-- Instagram -->
+  <a href="https://www.google.com/url?q=https://www.instagram.com/alokaopticians/&sa=U&ved=2ahUKEwj1ioXVoICWAxWXjq8BHes0I0IQ9zB6BAg1EAU&usg=AOvVaw0PKshp8aoubhvO8o22QLz1" aria-label="Instagram" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+    </svg>
+  </a>
+
+  <!-- LinkedIn -->
+  <a href="https://www.google.com/url?q=https://www.linkedin.com/company/alokaopticians/&sa=U&ved=2ahUKEwj1ioXVoICWAxWXjq8BHes0I0IQ9zB6BAg1EAk&usg=AOvVaw07YYt9GuSGPBcogWHFjk9m" aria-label="LinkedIn" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.6a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z"/>
+    </svg>
+  </a>
+
+  <!-- YouTube -->
+  <a href="https://www.google.com/url?q=https://www.youtube.com/channel/UCcshdi3uAZ0Vh04xBlG55OQ&sa=U&ved=2ahUKEwj1ioXVoICWAxWXjq8BHes0I0IQ9zB6BAg1EBE&usg=AOvVaw1m9eQiQsorvRwE7A6fKtsP" aria-label="YouTube" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  </a>
+</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <div>
+        <h4>Company</h4>
+        <a onclick="navigateTo('about')">About Us</a>
+        <a onclick="navigateTo('news')">News & Articles</a>
+        <a onclick="navigateTo('network')">Branch Location</a>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <a onclick="navigateTo('products')">Designer Eyewear</a>
+        <a onclick="navigateTo('products')">Contact Lenses</a>
+        <a onclick="navigateTo('products')">Digital Hearing Aids</a>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <a onclick="openBookingModal()">Book Eye Exam</a>
+        <a onclick="navigateTo('specialities')">Specialist Diagnostics</a>
+        <a onclick="navigateTo('specialities')">Sports Vision</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 1992–2026 ALOKA OPTICIANS Sri Lanka. All rights reserved.</p>
+    <p>Privacy Policy · Terms of Service</p>
+  </div>
+</footer>
+
+<!-- Interactive Booking Modal -->
+<div class="modal-backdrop" id="bookingModal">
+  <div class="modal-box">
+    <h3>Book Your Check-Up</h3>
+    <p style="font-size: 14px; color: var(--slate); margin-bottom: 20px;">Fill out details to confirm appointment. A PDF receipt will auto-download and open WhatsApp confirmation.</p>
+    <form onsubmit="handleFormSubmit(event)">
+      <div class="form-group"><label>Full Name</label><input type="text" id="custName" required placeholder="e.g. Pawan Kapuruge"></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="custPhone" required placeholder="e.g. 0771234567"></div>
+      <div class="form-group"><label>Branch</label><select id="custBranch" required><option value="Boralesgamuwa - 29 Lake Rd">Boralesgamuwa - 29 Lake Rd</option></select></div>
+      <div class="form-group"><label>Preferred Date</label><input type="date" id="custDate" required></div>
+      <div style="display: flex; gap: 10px; margin-top: 24px;">
+        <button type="submit" class="btn btn-primary" style="flex:1;">Confirm & Get PDF Slip</button>
+        <button type="button" onclick="closeBookingModal()" class="btn btn-ghost">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Shopping Cart Modal -->
+<div class="modal-backdrop" id="cartModal">
+  <div class="modal-box">
+    <h3>Your Shopping Cart</h3>
+    <div id="cartItemsContainer" class="cart-items-list"></div>
+    <div class="cart-total-row"><span>Total:</span><span id="cartTotalDisplay">LKR 0.00</span></div>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+      <button onclick="checkoutCartWhatsApp()" class="btn btn-whatsapp" style="width: 100%;">Proceed to WhatsApp Checkout</button>
+      <button onclick="closeCartModal()" class="btn btn-ghost" style="width: 100%;">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== OWNER PORTAL LOGIN MODAL ===== -->
+<div class="modal-backdrop" id="ownerLoginModal">
+  <div class="modal-box">
+    <h3>Owner Portal Login</h3>
+    <p style="font-size: 13.5px; color: var(--slate); margin-bottom: 20px;">Please authenticate with your administrator credentials to open the store control panel.</p>
+    <form onsubmit="handleOwnerLogin(event)">
+      <div class="form-group"><label>Username</label><input type="text" id="adminUsername" placeholder="Enter username..." required autocomplete="off"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="adminPassword" placeholder="Enter password..." required autocomplete="off"></div>
+      <div style="display: flex; gap: 10px;">
+        <button type="submit" class="btn btn-primary" style="flex:1;">Login to Portal</button>
+        <button type="button" onclick="closeOwnerPortal()" class="btn btn-ghost">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== OWNER PORTAL CMS & OPTICAL STOCK CONTROL DASHBOARD MODAL ===== -->
+<div class="modal-backdrop" id="ownerDashboardModal">
+  <div class="modal-box admin-modal-box full-screen-admin">
+    
+    <div class="admin-header-bar">
+      <div>
+        <h3 style="font-size: 24px; color: var(--ink-navy);">Owner Control & Optical Store Management</h3>
+        <p style="font-size: 13px; color: var(--slate);">User-friendly shop manager. Synchronize inventory, generate reports & push data to Google Sheets.</p>
+      </div>
+      <button onclick="closeOwnerDashboard()" class="btn btn-ghost btn-sm" style="border-radius: 20px;">Close Dashboard ✖</button>
+    </div>
+
+    <!-- Tab Navigation Bar -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('stock', this)">📦 Optical Stock Management</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('reports', this)">📊 Business Reports & Analytics</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('news', this)">📰 News & Articles</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('floating', this)">✨ Floating Home Spotlight</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('products', this)">🛍️ Store Products</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('showreel', this)">🎬 Eyewear Videos</button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('homepage', this)">📝 Home Text & Highlights</button>
+    </div>
+
+    <!-- =========================================================
+         TAB 1: OPTICAL STOCK MANAGEMENT SYSTEM
+    ========================================================= -->
+    <div class="admin-panel active" id="admin-panel-stock">
+      
+      <!-- STOCK LOGIN AUTH CARD -->
+      <div id="stock-auth-card" class="admin-card-section" style="max-width: 480px; margin: 40px auto; text-align: center;">
+        <h4 style="border:none; margin-bottom:8px;">🔒 Restricted Stock Management Access</h4>
+        <p style="font-size: 13px; color: var(--slate); margin-bottom: 20px;">
+          Workers cannot auto-login to Stock Management. Please enter the specific Owner Stock credentials.
+        </p>
+        <form onsubmit="handleStockLogin(event)">
+          <div class="form-group" style="text-align: left;">
+            <label>Stock Owner Username</label>
+            <input type="text" id="stockUsername" placeholder="Enter stock username..." required autocomplete="off">
+          </div>
+          <div class="form-group" style="text-align: left;">
+            <label>Stock Owner Password</label>
+            <input type="password" id="stockPassword" placeholder="Enter stock password..." required autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Unlock Stock Management</button>
+        </form>
+      </div>
+
+      <!-- MAIN STOCK CONTENT -->
+      <div id="stock-main-content" style="display: none;">
+        <!-- Top Actions Bar -->
+        <div style="display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="generateStockPDFReport()" class="btn btn-primary">📄 Download Stock Report (PDF)</button>
+            <button onclick="syncStockToGoogleSheet()" class="btn btn-success">☁️ Sync to Google Sheet Macro</button>
+            <button onclick="fetchStockFromGoogleSheet()" class="btn btn-ghost">🔄 Pull Data from Google Sheet</button>
+            <button onclick="lockStockSection()" class="btn btn-danger btn-sm" style="border-radius: 20px;">🔒 Re-lock Stock Section</button>
+          </div>
+          <div>
+            <span style="font-size: 12px; color: var(--slate); font-family: var(--font-mono);">Sheet ID: 15y2YglO2beNRaLD...</span>
+          </div>
+        </div>
+
+        <!-- Quick Summary Cards -->
+        <div class="stock-summary-grid">
+          <div class="stock-stat-card"><div class="val" id="stat-total-items">0</div><div class="lbl">Total Products</div></div>
+          <div class="stock-stat-card"><div class="val" id="stat-total-qty">0</div><div class="lbl">Total Stock Units</div></div>
+          <div class="stock-stat-card"><div class="val" id="stat-cost-val">LKR 0</div><div class="lbl">Total Asset Cost</div></div>
+          <div class="stock-stat-card"><div class="val" id="stat-retail-val">LKR 0</div><div class="lbl">Est. Sales Value</div></div>
+        </div>
+
+        <!-- Form to Add / Change Items -->
+        <div class="admin-card-section">
+          <h4 id="stock-form-title">➕ Add New Optical Inventory Item</h4>
+          <input type="hidden" id="stock-editing-id" value="">
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px;">
+            <div class="form-group">
+              <label>Product Name</label>
+              <input type="text" id="stock-input-product" placeholder="e.g. Ray-Ban Wayfarer Frame">
+            </div>
+            <div class="form-group">
+              <label>Product ID / Code</label>
+              <input type="text" id="stock-input-pid" placeholder="e.g. OPT-1001">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="stock-input-cat"></select>
+            </div>
+            <div class="form-group">
+              <label>Quantity</label>
+              <input type="number" id="stock-input-qty" placeholder="e.g. 15" min="0">
+            </div>
+            <div class="form-group">
+              <label>Unit Cost (LKR)</label>
+              <input type="number" id="stock-input-cost" placeholder="e.g. 12000" min="0">
+            </div>
+            <div class="form-group">
+              <label>Retail Price (LKR)</label>
+              <input type="number" id="stock-input-price" placeholder="e.g. 18500" min="0">
+            </div>
+            <div class="form-group">
+              <label>Supplier</label>
+              <select id="stock-input-supplier"></select>
+            </div>
+            <div class="form-group">
+              <label>Ordered Date</label>
+              <input type="date" id="stock-input-date">
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select id="stock-input-status">
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Out of Stock">Out of Stock</option>
+                <option value="Ordered">Ordered</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Stock Image (Optional)</label>
+              <input type="file" id="stock-input-img" accept="image/*">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 10px;">
+            <button onclick="saveStockItem()" class="btn btn-primary" id="btn-save-stock" style="flex:1;">➕ Save Item to Inventory</button>
+            <button onclick="resetStockForm()" class="btn btn-ghost" id="btn-cancel-stock" style="display:none;">Cancel Edit</button>
+          </div>
+        </div>
+
+        <!-- Live Optical Inventory Table -->
+        <div class="admin-card-section">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h4 style="border:none; margin:0; padding:0;">📋 Live Inventory Stock Table</h4>
+            <input type="text" id="stock-search-bar" placeholder="🔍 Search stock..." onkeyup="renderStockTable()" style="padding:6px 12px; border-radius:8px; border:1px solid var(--pale-ring); width:220px; font-size:13px;">
+          </div>
+
+          <div class="stock-table-wrapper">
+            <table class="stock-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Product ID</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Qty</th>
+                  <th>Cost</th>
+                  <th>Price</th>
+                  <th>Supplier</th>
+                  <th>Ordered Date</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stock-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================
+         TAB 2: BUSINESS REPORTS & FINANCIAL ANALYTICS
+    ========================================================= -->
+    <div class="admin-panel" id="admin-panel-reports">
+      
+      <!-- Top Report Controls Card -->
+      <div class="admin-card-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 style="margin:0; border:none;">📈 Optical Shop Financial & Sales Reports</h4>
+          <div style="font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--iris-teal-dark); background: var(--pale-ring); padding: 4px 12px; border-radius: 20px;">
+            🕒 Live Time: <span id="report-live-clock">--:--:--</span>
+          </div>
+        </div>
+        <p style="font-size: 13.5px; color: var(--slate); margin-bottom: 20px;">
+          Select a period and start date range to auto-generate reports with real-time timestamps, financial statements, and pie chart visualization.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label>Report Type</label>
+            <select id="report-type-select" onchange="toggleReportPeriodControls()">
+              <option value="Annual">Annual Report</option>
+              <option value="Monthly">Monthly Report</option>
+              <option value="Custom">Custom Date Range</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="group-report-year">
+            <label>Year</label>
+            <select id="report-year-select">
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="group-report-month" style="display: none;">
+            <label>Month</label>
+            <select id="report-month-select">
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+
+          <!-- Start & End Date Range Pickers -->
+          <div class="form-group" id="group-report-startdate">
+            <label>Start Date Range</label>
+            <input type="date" id="report-start-date" onchange="calculateAndRenderReport()">
+          </div>
+
+          <div class="form-group" id="group-report-enddate">
+            <label>End Date Range</label>
+            <input type="date" id="report-end-date" onchange="calculateAndRenderReport()">
+          </div>
+
+          <div class="form-group">
+            <label>Operating Expenses (LKR)</label>
+            <input type="number" id="report-input-opex" value="250000" placeholder="e.g. 250000" onkeyup="calculateAndRenderReport()">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+          <button onclick="calculateAndRenderReport()" class="btn btn-primary">🔄 Recalculate & Refresh Report</button>
+          <button onclick="downloadFinancialPDFReport()" class="btn btn-ghost" style="border-color: var(--iris-teal-dark); color: var(--iris-teal-dark);">📄 Download PDF Report</button>
+          <button onclick="syncReportToGoogleSheet()" class="btn btn-success">☁️ Upload Report to Google Sheet Macro</button>
+          <button onclick="clearOldReports()" class="btn btn-danger" style="margin-left: auto;">🗑️ Clear Old / Existing Reports</button>
+        </div>
+      </div>
+
+      <!-- Financial Table & Pie Chart Layout Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+        
+        <!-- Table of Sales Card -->
+        <div class="admin-card-section">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4 id="report-table-title" style="margin:0; border:none;">📋 Table of Sales — Annual Report 2026</h4>
+          </div>
+          <p id="report-timestamp-display" style="font-size: 12px; color: var(--slate); font-family: var(--font-mono); margin-top: 4px; margin-bottom: 12px; font-weight: 500;"></p>
+          <div class="stock-table-wrapper">
+            <table class="stock-table" id="table-of-sales">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="text-align: right;">Amount (LKR)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Revenue (Sales)</strong></td>
+                  <td style="text-align: right; font-weight: 700; color: #155724;" id="report-val-revenue">LKR 0.00</td>
+                </tr>
+                <tr>
+                  <td>Cost of Goods Sold</td>
+                  <td style="text-align: right; color: #bd2130;" id="report-val-cogs">LKR 0.00</td>
+                </tr>
+                <tr style="background: #eef7f6;">
+                  <td><strong>Gross Profit</strong></td>
+                  <td style="text-align: right; font-weight: 700; color: var(--iris-teal-dark);" id="report-val-grossprofit">LKR 0.00</td>
+                </tr>
+                <tr>
+                  <td>Operating Expenses</td>
+                  <td style="text-align: right; color: #bd2130;" id="report-val-opex">LKR 0.00</td>
+                </tr>
+                <tr style="background: #d4edda; font-size: 15px;">
+                  <td><strong>Net Profit (Earnings)</strong></td>
+                  <td style="text-align: right; font-weight: 800; color: #155724;" id="report-val-netprofit">LKR 0.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Business Breakdown Pie Chart Card -->
+        <div class="admin-card-section">
+          <h4 id="report-chart-title">📊 Business Analysis Chart</h4>
+          <p style="font-size: 12px; color: var(--slate); margin-bottom: 12px;">
+            Visual breakdown of Revenue distribution across Optical Stock Cost, Operating Expenses, and Net Earnings.
+          </p>
+          <div style="max-width: 320px; margin: 0 auto; position: relative;">
+            <canvas id="businessPieChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PANEL 3: NEWS CMS -->
+    <div class="admin-panel" id="admin-panel-news">
+      <div class="admin-card-section">
+        <h4 id="news-form-title">➕ Add New Article or Update to News Page</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+          <input type="hidden" id="editing-news-id" value="">
+          <div class="form-group" style="grid-column: span 2;">
+            <label>Article Title</label>
+            <input type="text" id="new-news-title" placeholder="e.g. Aloka Vision Clinic launches new diagnostic tools">
+          </div>
+          <div class="form-group">
+            <label>Publication Date</label>
+            <input type="date" id="new-news-date">
+          </div>
+          <div class="form-group">
+            <label>Direct Upload Image or Video</label>
+            <input type="file" id="new-news-file" accept="image/*,video/*">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label>Short Summary / Content</label>
+            <textarea id="new-news-desc" rows="3" placeholder="Enter article summary or details..."></textarea>
+          </div>
+          <div style="grid-column: span 2; display: flex; gap: 10px;">
+            <button onclick="adminSaveNews()" class="btn btn-primary" id="save-news-btn" style="flex: 1; padding: 12px;">➕ Publish Article</button>
+            <button onclick="resetNewsForm()" class="btn btn-ghost" id="cancel-news-btn" style="display: none;">Cancel Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card-section">
+        <h4>📋 Current News Articles</h4>
+        <div id="admin-news-list" style="max-height: 280px; overflow-y: auto;"></div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: FLOATING EYEWEAR SPOTLIGHT CMS -->
+    <div class="admin-panel" id="admin-panel-floating">
+      <div class="admin-card-section">
+        <h4>Edit Floating Home Card ("Eyewear Collection 2026")</h4>
+        <p style="font-size: 13px; color: var(--slate); margin-bottom: 16px;">Change or replace the floating showcase item displayed on your home page banner.</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group"><label>Card Badge Text</label><input type="text" id="spotlight-tag" placeholder="e.g. ✨ Eyewear Collection 2026"></div>
+          <div class="form-group"><label>Card Title Text</label><input type="text" id="spotlight-title" placeholder="e.g. Precision Crafted Frames"></div>
+          <div class="form-group" style="grid-column: span 2;"><label>Upload New Display Image or Video</label><input type="file" id="spotlight-file" accept="image/*,video/*"></div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-top: 10px;">
+          <button onclick="saveSpotlightSettings()" class="btn btn-primary" style="flex: 1;">💾 Save & Update Floating Banner</button>
+          <button onclick="removeSpotlightCard()" class="btn btn-danger">🗑️ Hide Card from Homepage</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 5: PRODUCT CATALOG CMS -->
+    <div class="admin-panel" id="admin-panel-products">
+      <div class="admin-card-section">
+        <h4>➕ Add New Product to Store</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+          <div class="form-group"><label>Product Name</label><input type="text" id="new-prod-name" placeholder="e.g. Designer Sunglasses"></div>
+          <div class="form-group"><label>Price (LKR)</label><input type="number" id="new-prod-price" placeholder="e.g. 15000"></div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="new-prod-cat">
+              <option value="sunglasses">Sunglasses</option>
+              <option value="spectacles">Spectacles</option>
+              <option value="hearing">Hearing Aids</option>
+              <option value="lenses">Contact Lenses</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Upload Product Image Directly</label><input type="file" id="new-prod-file" accept="image/*"></div>
+          <div class="form-group" style="grid-column: span 2;"><label>Short Description</label><input type="text" id="new-prod-desc" placeholder="e.g. UV400 polarized frame"></div>
+          <button onclick="adminAddProduct()" class="btn btn-primary" style="grid-column: span 2; padding: 14px;">➕ Upload & Publish Product</button>
+        </div>
+      </div>
+
+      <div class="admin-card-section">
+        <h4>📋 Current Products List</h4>
+        <div id="admin-product-list" style="max-height: 280px; overflow-y: auto;"></div>
+      </div>
+    </div>
+
+    <!-- PANEL 6: SHOWREEL CMS -->
+    <div class="admin-panel" id="admin-panel-showreel">
+      <div class="admin-card-section">
+        <h4>➕ Add Eyewear Video Reel</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+          <div class="form-group"><label>Video Title</label><input type="text" id="new-reel-title" placeholder="e.g. Precision Fitting"></div>
+          <div class="form-group"><label>Tag / Category Badge</label><input type="text" id="new-reel-badge" placeholder="e.g. Designer Optics"></div>
+          <div class="form-group" style="grid-column: span 2;"><label>Video Web Link (.mp4)</label><input type="text" id="new-reel-video" placeholder="https://example.com/video.mp4"></div>
+          <button onclick="adminAddReel()" class="btn btn-primary" style="grid-column: span 2;">➕ Add Video to Homepage</button>
+        </div>
+      </div>
+
+      <div class="admin-card-section">
+        <h4>🎬 Existing Videos</h4>
+        <div id="admin-reel-list" style="max-height: 240px; overflow-y: auto;"></div>
+      </div>
+    </div>
+
+    <!-- PANEL 7: HOMEPAGE TEXT CMS -->
+    <div class="admin-panel" id="admin-panel-homepage">
+      <div class="admin-card-section">
+        <h4>📝 Edit Homepage Main Text</h4>
+        <div class="form-group"><label>Hero Title Heading</label><input type="text" id="edit-hero-title"></div>
+        <div class="form-group"><label>Hero Subtitle Description</label><textarea id="edit-hero-sub" rows="2"></textarea></div>
+        <button onclick="adminSaveHeroText()" class="btn btn-primary">💾 Update Homepage Text</button>
+      </div>
+
+      <div class="admin-card-section">
+        <h4>➕ Add Quick Highlight Card</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group"><label>Highlight Title</label><input type="text" id="new-hl-title" placeholder="e.g. Clinical Eye Exams"></div>
+          <div class="form-group"><label>Upload Card Image</label><input type="file" id="new-hl-file" accept="image/*"></div>
+          <div class="form-group" style="grid-column: span 2;"><label>Description</label><input type="text" id="new-hl-desc" placeholder="e.g. Modern diagnostic tools"></div>
+          <button onclick="adminAddHighlight()" class="btn btn-primary" style="grid-column: span 2;">➕ Add Highlight Card</button>
+        </div>
+      </div>
+
+      <div class="admin-card-section">
+        <h4>Existing Highlight Cards</h4>
+        <div id="admin-highlight-list" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+<script>
+const COMPANY_WHATSAPP = "94117575100"; 
+let cart = [];
+let isStockUnlocked = false;
+let pieChartInstance = null;
+let lastReportRaw = null;      // holds the raw numeric values of the last calculated report
+let reportSyncTimer = null;    // debounce handle for auto-sync
+
+// NOTE: Ensure to deploy script as Web App and insert your Web App Executable URL here
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1Lg9pEOgksen72lASsa6vCg6TG0cKzhuWO8MB870iKdlOt-umS9Nv3mOlv6vBNgH3/exec";
+
+const defaultCategories = ["Frames", "Sunglasses", "Contact Lenses", "Optical Lenses", "Accessories"];
+const defaultSuppliers = ["Ray-Ban Direct", "Essilor Luxottica", "Safilo Group", "CooperVision"];
+
+const defaultOpticalInventory = [
+  { productId: "OPT-101", product: "Ray-Ban Wayfarer Classic", category: "Sunglasses", qty: 12, cost: 14000, price: 18500, supplier: "Ray-Ban Direct", orderedDate: "2026-05-10", status: "In Stock", image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=150&q=80" },
+  { productId: "OPT-102", product: "Essilor Crizal Sapphire Lens", category: "Optical Lenses", qty: 25, cost: 6500, price: 9800, supplier: "Essilor Luxottica", orderedDate: "2026-06-01", status: "In Stock", image: "" },
+  { productId: "OPT-103", product: "AcuVue Oasys Daily (30p)", category: "Contact Lenses", qty: 4, cost: 5500, price: 8900, supplier: "CooperVision", orderedDate: "2026-06-15", status: "Low Stock", image: "" },
+  { productId: "OPT-104", product: "Oakley Holbrook Polarized", category: "Sunglasses", qty: 0, cost: 16000, price: 22000, supplier: "Safilo Group", orderedDate: "2026-07-01", status: "Out of Stock", image: "" }
+];
+
+const defaultNews = [
+  { id: 1, title: 'Aloka Vision Clinic upgrades diagnostic tools at Boralesgamuwa branch', date: 'Jul 12, 2026', desc: 'Our Boralesgamuwa outlet is now equipped with optical diagnostics to detect early visual disorders with pinpoint precision.', type: 'image', media: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=500&q=80' },
+  { id: 2, title: 'Understanding Blue Light: Protecting your eye health in a digital age', date: 'Jun 20, 2026', desc: 'Learn about the impacts of prolonged screen exposure and how blue-control anti-reflective coatings help minimize digital strain.', type: 'image', media: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=500&q=80' }
+];
+
+const defaultSpotlight = { visible: true, tag: '✨ Eyewear Collection 2026', title: 'Precision Crafted Frames', type: 'video', src: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-putting-on-sunglasses-42907-large.mp4' };
+const defaultProducts = [
+  { id: 1, name: 'Classic Aviators', price: 18500, cat: 'sunglasses', desc: 'Polarized UV400 protection with metallic frame.', img: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80' },
+  { id: 2, name: 'Urban Executive', price: 14200, cat: 'spectacles', desc: 'Sleek matte acetate frame for comfortable daily wear.', img: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=600&q=80' }
+];
+const defaultReels = [{ id: 1, title: 'Urban UV Series', badge: 'Polarized Sunwear', video: 'https://assets.mixkit.co/videos/preview/mixkit-woman-wearing-sunglasses-smiling-41584-large.mp4' }];
+const defaultHighlights = [{ id: 1, title: 'Designer Eyewear', desc: 'Curated sunglasses & frames from top global brands.', img: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80' }];
+
+let storeCategories = JSON.parse(localStorage.getItem('aloka_categories')) || defaultCategories;
+let storeSuppliers = JSON.parse(localStorage.getItem('aloka_suppliers')) || defaultSuppliers;
+let storeStock = JSON.parse(localStorage.getItem('aloka_stock_inventory')) || defaultOpticalInventory;
+
+let storeNews = JSON.parse(localStorage.getItem('aloka_news')) || defaultNews;
+let storeSpotlight = JSON.parse(localStorage.getItem('aloka_spotlight')) || defaultSpotlight;
+let storeProducts = JSON.parse(localStorage.getItem('aloka_products')) || defaultProducts;
+let storeReels = JSON.parse(localStorage.getItem('aloka_reels')) || defaultReels;
+let storeHighlights = JSON.parse(localStorage.getItem('aloka_highlights')) || defaultHighlights;
+let storeHeroTitle = localStorage.getItem('aloka_hero_title') || 'See life clearly.<br><em>Hear</em> every moment.';
+let storeHeroSub = localStorage.getItem('aloka_hero_sub') || 'Comprehensive optical eye care, designer eyewear, and digital hearing solutions from Sri Lanka\'s leading specialists.';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('irisOverlay');
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      overlay.classList.add('is-open');
+      setTimeout(() => overlay.classList.add('is-hidden'), 950);
+    }, 100);
+  });
+
+  const header = document.getElementById('siteHeader');
+  function onScroll() {
+    const scrollTop = window.scrollY;
+    header.classList.toggle('is-scrolled', scrollTop > 40);
+    document.getElementById('backToTop').classList.toggle('is-visible', scrollTop > 400);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  document.getElementById('backToTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+  navToggle.addEventListener('click', () => {
+    const isOpen = mainNav.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  // Live real-time clock update
+  setInterval(() => {
+    const clockEl = document.getElementById('report-live-clock');
+    if (clockEl) {
+      clockEl.innerText = new Date().toLocaleTimeString();
+    }
+  }, 1000);
+
+  // Initialize report date defaults (Start of current month to today)
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startInput = document.getElementById('report-start-date');
+  const endInput = document.getElementById('report-end-date');
+  if (startInput) startInput.value = firstDay.toISOString().split('T')[0];
+  if (endInput) endInput.value = today.toISOString().split('T')[0];
+
+  renderWebsiteContent();
+  populateStockDropdowns();
+  renderStockTable();
+});
+
+function triggerToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderWebsiteContent() {
+  const newsContainer = document.getElementById('display-news-grid');
+  if (storeNews.length === 0) {
+    newsContainer.innerHTML = '<p style="grid-column: span 3; text-align: center; color: var(--slate);">No news articles published yet.</p>';
+  } else {
+    newsContainer.innerHTML = storeNews.map(item => `
+      <article class="news-card">
+        <div>
+          ${item.type === 'video' ? `<video autoplay muted loop playsinline controls src="${item.media}"></video>` : `<img src="${item.media}" alt="${item.title}">`}
+          <p class="news-date">${item.date}</p>
+          <h3>${item.title}</h3>
+          ${item.desc ? `<p>${item.desc}</p>` : ''}
+        </div>
+      </article>
+    `).join('');
+  }
+
+  document.getElementById('display-hero-title').innerHTML = storeHeroTitle;
+  document.getElementById('display-hero-sub').innerText = storeHeroSub;
+
+  const spotlightContainer = document.getElementById('floatingEyewearSpotlight');
+  if (storeSpotlight && storeSpotlight.visible) {
+    spotlightContainer.style.display = 'flex';
+    spotlightContainer.innerHTML = `
+      <span class="hero-badge-tag">${storeSpotlight.tag}</span>
+      ${storeSpotlight.type === 'video' ? `<video class="hero-badge-media" autoplay muted loop playsinline><source src="${storeSpotlight.src}" type="video/mp4"></video>` : `<img class="hero-badge-media" src="${storeSpotlight.src}">`}
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:13px; font-weight:600;">${storeSpotlight.title}</span>
+        <span class="text-link" onclick="navigateTo('products')" style="font-size:12px; color:var(--white);">View All →</span>
+      </div>
+    `;
+  } else {
+    spotlightContainer.style.display = 'none';
+  }
+
+  document.getElementById('display-reel-grid').innerHTML = storeReels.map(r => `
+    <div class="reel-card" onclick="navigateTo('products')">
+      <video autoplay muted loop playsinline><source src="${r.video}" type="video/mp4"></video>
+      <div class="reel-overlay"><span class="reel-badge">${r.badge}</span><h3 class="reel-title">${r.title}</h3></div>
+    </div>
+  `).join('');
+
+  document.getElementById('display-highlights-grid').innerHTML = storeHighlights.map(h => `
+    <article class="product-card" onclick="navigateTo('products')" style="cursor:pointer;">
+      <div class="product-media"><img src="${h.img}" alt="${h.title}"></div>
+      <h3>${h.title}</h3><p>${h.desc}</p><span class="text-link">Explore →</span>
+    </article>
+  `).join('');
+
+  document.getElementById('catalog-grid').innerHTML = storeProducts.map(p => `
+    <article class="product-card" data-cat="${p.cat}">
+      <div class="product-media"><img src="${p.img}" alt="${p.name}"></div>
+      <div><h3>${p.name}</h3><p>${p.desc}</p><div class="product-price">LKR ${Number(p.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</div></div>
+      <div class="product-actions">
+        <button class="btn btn-ghost" style="width:100%;" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+        <button class="btn btn-whatsapp" style="width:100%;" onclick="buyDirectWhatsApp('${p.name}', ${p.price})">Buy via WhatsApp</button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function navigateTo(pageId) {
+  document.querySelectorAll('.spa-page').forEach(p => p.classList.remove('active-page'));
+  const target = document.getElementById(`page-${pageId}`);
+  if (target) target.classList.add('active-page');
+
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.toggle('is-active', l.getAttribute('data-page') === pageId);
+  });
+  document.getElementById('mainNav').classList.remove('is-open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function filterProducts(category, btnElement) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btnElement.classList.add('active');
+  document.querySelectorAll('#catalog-grid .product-card').forEach(card => {
+    card.style.display = (category === 'all' || card.getAttribute('data-cat') === category) ? 'flex' : 'none';
+  });
+}
+
+function addToCart(name, price) {
+  const existing = cart.find(item => item.name === name);
+  if (existing) existing.qty += 1;
+  else cart.push({ name, price, qty: 1 });
+  updateCartUI();
+  triggerToast(`Added "${name}" to cart!`);
+}
+
+function updateCartUI() {
+  document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
+  const container = document.getElementById('cartItemsContainer');
+  if (cart.length === 0) {
+    container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--slate);">Your cart is empty.</p>';
+  } else {
+    container.innerHTML = cart.map((item, index) => `
+      <div class="cart-item">
+        <div><div class="cart-item-title">${item.name}</div><div class="cart-item-price">LKR ${item.price.toLocaleString()} x ${item.qty}</div></div>
+        <div class="cart-qty-ctrl">
+          <button class="cart-qty-btn" onclick="changeQty(${index}, -1)">-</button>
+          <span>${item.qty}</span>
+          <button class="cart-qty-btn" onclick="changeQty(${index}, 1)">+</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  document.getElementById('cartTotalDisplay').innerText = `LKR ${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+}
+
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty <= 0) cart.splice(index, 1);
+  updateCartUI();
+}
+
+function openCartModal() { updateCartUI(); document.getElementById('cartModal').classList.add('active'); }
+function closeCartModal() { document.getElementById('cartModal').classList.remove('active'); }
+
+function buyDirectWhatsApp(name, price) {
+  const msg = `Hello Aloka Opticians! 👋\n\nI would like to buy:\n- *${name}* (LKR ${price.toLocaleString('en-US', {minimumFractionDigits: 2})})\n\nPlease assist me with placing this order!`;
+  window.open(`https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function checkoutCartWhatsApp() {
+  if (cart.length === 0) return alert("Your cart is empty!");
+  let orderDetails = "Hello Aloka Opticians! 👋\n\nI would like to place an order:\n\n";
+  let total = 0;
+  cart.forEach(item => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    orderDetails += `• *${item.name}* x${item.qty} - LKR ${subtotal.toLocaleString('en-US')}\n`;
+  });
+  orderDetails += `\n*Grand Total: LKR ${total.toLocaleString('en-US', {minimumFractionDigits: 2})}*\n\nPlease confirm my order!`;
+  window.open(`https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(orderDetails)}`, '_blank');
+}
+
+function openBookingModal() { document.getElementById('bookingModal').classList.add('active'); }
+function closeBookingModal() { document.getElementById('bookingModal').classList.remove('active'); }
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('custName').value;
+  const phone = document.getElementById('custPhone').value;
+  const branch = document.getElementById('custBranch').value;
+  const date = document.getElementById('custDate').value;
+  const bookingRef = "ALK-" + Math.floor(100000 + Math.random() * 900000);
+
+  generateAppointmentPDF(bookingRef, name, phone, branch, date);
+  const msg = `Hello Aloka Opticians! 👋\n\nI scheduled an appointment.\n\n📋 *Ref:* ${bookingRef}\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n📍 *Branch:* ${branch}\n📅 *Date:* ${date}`;
+  closeBookingModal();
+  triggerToast('Appointment booked! Downloaded slip & opening WhatsApp...');
+  setTimeout(() => window.open(`https://wa.me/${0775514386}?text=${encodeURIComponent(msg)}`, '_blank'), 1000);
+}
+
+function generateAppointmentPDF(ref, name, phone, branch, date) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFillColor(16, 30, 43); doc.rect(0, 0, 210, 40, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("ALOKA OPTICIANS", 20, 22);
+  doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text("Appointment Confirmation Slip", 20, 30);
+  doc.setTextColor(16, 30, 43); doc.setFontSize(11);
+  doc.text(`Booking Ref #: ${ref}`, 20, 60);
+  doc.text(`Customer Name: ${name}`, 20, 70);
+  doc.text(`Phone Number: ${phone}`, 20, 80);
+  doc.text(`Branch: ${branch}`, 20, 90);
+  doc.text(`Date: ${date}`, 20, 100);
+  doc.save(`Aloka_Appointment_${ref}.pdf`);
+}
+
+/* =========================================================
+   OWNER PORTAL LOGIN & NAVIGATION MODAL LOGIC
+========================================================= */
+
+function openOwnerPortal() {
+  document.getElementById('ownerLoginModal').classList.add('active');
+}
+
+function closeOwnerPortal() {
+  document.getElementById('ownerLoginModal').classList.remove('active');
+}
+
+function handleOwnerLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('adminUsername').value;
+  const p = document.getElementById('adminPassword').value;
+
+  if (u === 'admin' && p === 'aloka123') {
+    closeOwnerPortal();
+    document.getElementById('ownerDashboardModal').classList.add('active');
+    triggerToast('Logged into Owner Control Portal!');
+  } else {
+    alert('Invalid Administrator credentials.');
+  }
+}
+
+function closeOwnerDashboard() {
+  document.getElementById('ownerDashboardModal').classList.remove('active');
+}
+
+function switchAdminTab(tabName, btn) {
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById(`admin-panel-${tabName}`);
+  if (panel) panel.classList.add('active');
+
+  if (tabName === 'reports') {
+    calculateAndRenderReport();
+  }
+}
+
+/* =========================================================
+   OWNER PORTAL - OPTICAL STOCK MANAGEMENT SYSTEM LOGIC
+========================================================= */
+
+function handleStockLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('stockUsername').value;
+  const p = document.getElementById('stockPassword').value;
+
+  if (u === 'stockowner' && p === 'stock2026#') {
+    isStockUnlocked = true;
+    document.getElementById('stock-auth-card').style.display = 'none';
+    document.getElementById('stock-main-content').style.display = 'block';
+    document.getElementById('stockUsername').value = '';
+    document.getElementById('stockPassword').value = '';
+    triggerToast('Stock Management Unlocked!');
+  } else {
+    alert('Invalid Stock Credentials! Only specific stock owner credentials can access inventory.');
+  }
+}
+
+function lockStockSection() {
+  isStockUnlocked = false;
+  document.getElementById('stock-main-content').style.display = 'none';
+  document.getElementById('stock-auth-card').style.display = 'block';
+  triggerToast('Stock section locked.');
+}
+
+function populateStockDropdowns() {
+  const catSelect = document.getElementById('stock-input-cat');
+  catSelect.innerHTML = storeCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+  const supSelect = document.getElementById('stock-input-supplier');
+  supSelect.innerHTML = storeSuppliers.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+function renderStockTable() {
+  const searchVal = document.getElementById('stock-search-bar').value.toLowerCase();
+  const tableBody = document.getElementById('stock-table-body');
+  
+  let totalItems = storeStock.length;
+  let totalQty = 0;
+  let totalCostVal = 0;
+  let totalRetailVal = 0;
+
+  const filtered = storeStock.filter(item => {
+    return (item.product || '').toLowerCase().includes(searchVal) ||
+           (item.productId || '').toLowerCase().includes(searchVal) ||
+           (item.category || '').toLowerCase().includes(searchVal) ||
+           (item.supplier || '').toLowerCase().includes(searchVal);
+  });
+
+  tableBody.innerHTML = filtered.map((item) => {
+    totalQty += Number(item.qty) || 0;
+    totalCostVal += (Number(item.qty) || 0) * (Number(item.cost) || 0);
+    totalRetailVal += (Number(item.qty) || 0) * (Number(item.price) || 0);
+
+    let statusBadgeClass = "status-instock";
+    if (item.status === "Low Stock") statusBadgeClass = "status-lowstock";
+    if (item.status === "Out of Stock") statusBadgeClass = "status-outstock";
+    if (item.status === "Ordered") statusBadgeClass = "status-ordered";
+
+    const imageHtml = item.image 
+      ? `<img src="${item.image}" alt="${item.product}" style="width:42px; height:42px; object-fit:cover; border-radius:6px; border:1px solid var(--pale-ring);">`
+      : `<span style="font-size:11px; color:var(--slate);">No Image</span>`;
+
+    return `
+      <tr>
+        <td>${imageHtml}</td>
+        <td><strong>${item.productId || 'N/A'}</strong></td>
+        <td>${item.product}</td>
+        <td>${item.category}</td>
+        <td><strong>${item.qty}</strong></td>
+        <td>LKR ${(Number(item.cost) || 0).toLocaleString()}</td>
+        <td>LKR ${(Number(item.price) || 0).toLocaleString()}</td>
+        <td>${item.supplier}</td>
+        <td>${item.orderedDate || '-'}</td>
+        <td><span class="badge-status ${statusBadgeClass}">${item.status}</span></td>
+        <td style="text-align:center;">
+          <button onclick="editStockItem('${item.productId}')" class="btn btn-ghost btn-sm" style="padding:4px 8px; font-size:11px;">Edit</button>
+          <button onclick="deleteStockItem('${item.productId}')" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:11px;">Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('stat-total-items').innerText = totalItems;
+  document.getElementById('stat-total-qty').innerText = totalQty;
+  document.getElementById('stat-cost-val').innerText = "LKR " + totalCostVal.toLocaleString('en-US');
+  document.getElementById('stat-retail-val').innerText = "LKR " + totalRetailVal.toLocaleString('en-US');
+
+  calculateAndRenderReport();
+}
+
+async function saveStockItem() {
+  const editId = document.getElementById('stock-editing-id').value;
+  const product = document.getElementById('stock-input-product').value.trim();
+  const productId = document.getElementById('stock-input-pid').value.trim();
+  const category = document.getElementById('stock-input-cat').value;
+  const qty = parseInt(document.getElementById('stock-input-qty').value) || 0;
+  const cost = parseFloat(document.getElementById('stock-input-cost').value) || 0;
+  const price = parseFloat(document.getElementById('stock-input-price').value) || 0;
+  const supplier = document.getElementById('stock-input-supplier').value;
+  const orderedDate = document.getElementById('stock-input-date').value;
+  const status = document.getElementById('stock-input-status').value;
+  const imgInput = document.getElementById('stock-input-img');
+
+  if (!product || !productId) {
+    alert("Please fill in both Product Name and Product ID.");
+    return;
+  }
+
+  let image = "";
+  if (editId) {
+    const existing = storeStock.find(i => i.productId === editId);
+    if (existing) image = existing.image || "";
+  }
+
+  if (imgInput.files && imgInput.files[0]) {
+    image = await readFileAsDataURL(imgInput.files[0]);
+  }
+
+  if (editId) {
+    const itemIndex = storeStock.findIndex(i => i.productId === editId);
+    if (itemIndex > -1) {
+      storeStock[itemIndex] = { productId, product, category, qty, cost, price, supplier, orderedDate, status, image };
+      triggerToast("Stock item updated successfully!");
+    }
+  } else {
+    storeStock.push({ productId, product, category, qty, cost, price, supplier, orderedDate, status, image });
+    triggerToast("New stock item added to inventory!");
+  }
+
+  localStorage.setItem('aloka_stock_inventory', JSON.stringify(storeStock));
+  resetStockForm();
+  renderStockTable();
+}
+
+function editStockItem(pid) {
+  const item = storeStock.find(i => i.productId === pid);
+  if (!item) return;
+
+  document.getElementById('stock-editing-id').value = item.productId;
+  document.getElementById('stock-input-product').value = item.product;
+  document.getElementById('stock-input-pid').value = item.productId;
+  document.getElementById('stock-input-cat').value = item.category;
+  document.getElementById('stock-input-qty').value = item.qty;
+  document.getElementById('stock-input-cost').value = item.cost;
+  document.getElementById('stock-input-price').value = item.price;
+  document.getElementById('stock-input-supplier').value = item.supplier;
+  document.getElementById('stock-input-date').value = item.orderedDate || '';
+  document.getElementById('stock-input-status').value = item.status;
+  document.getElementById('stock-input-img').value = '';
+
+  document.getElementById('stock-form-title').innerText = "✏️ Change / Edit Stock Item";
+  document.getElementById('btn-save-stock').innerText = "💾 Save Changes";
+  document.getElementById('btn-cancel-stock').style.display = "inline-block";
+}
+
+function resetStockForm() {
+  document.getElementById('stock-editing-id').value = "";
+  document.getElementById('stock-input-product').value = "";
+  document.getElementById('stock-input-pid').value = "";
+  document.getElementById('stock-input-qty').value = "";
+  document.getElementById('stock-input-cost').value = "";
+  document.getElementById('stock-input-price').value = "";
+  document.getElementById('stock-input-date').value = "";
+  document.getElementById('stock-input-img').value = "";
+
+  document.getElementById('stock-form-title').innerText = "➕ Add New Optical Inventory Item";
+  document.getElementById('btn-save-stock').innerText = "➕ Save Item to Inventory";
+  document.getElementById('btn-cancel-stock').style.display = "none";
+}
+
+function deleteStockItem(pid) {
+  if (confirm(`Remove product ID "${pid}" from stock inventory?`)) {
+    storeStock = storeStock.filter(i => i.productId !== pid);
+    localStorage.setItem('aloka_stock_inventory', JSON.stringify(storeStock));
+    renderStockTable();
+    triggerToast("Item removed from stock!");
+  }
+}
+
+function generateStockPDFReport() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('landscape');
+
+  doc.setFillColor(16, 30, 43);
+  doc.rect(0, 0, 297, 35, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("ALOKA OPTICIANS — ANNUAL OPTICAL STOCK REPORT", 14, 22);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Generated On: ${new Date().toLocaleString()} | Owner Portal Audit Report`, 14, 29);
+
+  let totalQty = storeStock.reduce((s, i) => s + (Number(i.qty) || 0), 0);
+  let totalCost = storeStock.reduce((s, i) => s + ((Number(i.qty) || 0) * (Number(i.cost) || 0)), 0);
+  let totalSalesVal = storeStock.reduce((s, i) => s + ((Number(i.qty) || 0) * (Number(i.price) || 0)), 0);
+
+  doc.setTextColor(16, 30, 43);
+  doc.setFontSize(11);
+  doc.text(`Total SKU Lines: ${storeStock.length}   |   Total Units in Hand: ${totalQty}   |   Total Valuation Cost: LKR ${totalCost.toLocaleString()}   |   Est. Market Sales Value: LKR ${totalSalesVal.toLocaleString()}`, 14, 46);
+
+  const tableRows = storeStock.map(item => [
+    item.image ? 'Yes' : 'No',
+    item.productId || '-',
+    item.product || '-',
+    item.category || '-',
+    item.qty || '0',
+    `LKR ${(Number(item.cost) || 0).toLocaleString()}`,
+    `LKR ${(Number(item.price) || 0).toLocaleString()}`,
+    item.supplier || '-',
+    item.orderedDate || '-',
+    item.status || 'In Stock'
+  ]);
+
+  doc.autoTable({
+    startY: 52,
+    head: [['Has Image', 'Product ID', 'Product Name', 'Category', 'Qty', 'Unit Cost', 'Retail Price', 'Supplier', 'Ordered Date', 'Status']],
+    body: tableRows,
+    theme: 'grid',
+    headStyles: { fillColor: [31, 138, 130], textColor: 255 },
+    styles: { fontSize: 9 }
+  });
+
+  doc.save(`Aloka_Optical_Stock_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+  triggerToast("Stock Report PDF generated & downloaded!");
+}
+
+async function syncStockToGoogleSheet() {
+  triggerToast("Syncing data to Google Sheet...");
+  const payload = {
+    action: "sync_stock",
+    categories: storeCategories,
+    suppliers: storeSuppliers,
+    inventoryData: storeStock
+  };
+
+  try {
+    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    triggerToast("Data sent to Google Sheet Macro successfully!");
+  } catch (err) {
+    alert("Error syncing to Google Sheet: " + err.toString());
+  }
+}
+
+async function fetchStockFromGoogleSheet() {
+  triggerToast("Pulling stock from Google Sheet...");
+  try {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+    const data = await response.json();
+
+    if (data.categories && data.categories.length) {
+      storeCategories = data.categories;
+      localStorage.setItem('aloka_categories', JSON.stringify(storeCategories));
+    }
+    if (data.suppliers && data.suppliers.length) {
+      storeSuppliers = data.suppliers;
+      localStorage.setItem('aloka_suppliers', JSON.stringify(storeSuppliers));
+    }
+    if (data.inventoryData && Array.isArray(data.inventoryData)) {
+      storeStock = data.inventoryData;
+      localStorage.setItem('aloka_stock_inventory', JSON.stringify(storeStock));
+    }
+
+    populateStockDropdowns();
+    renderStockTable();
+    triggerToast("Stock data synchronized from Google Sheet!");
+  } catch (err) {
+    alert("Could not pull data from Google Sheet Web App. Ensure Web App URL is correctly deployed with access permissions.");
+  }
+}
+
+/* =========================================================
+   FINANCIAL REPORTING & PIE CHART LOGIC
+========================================================= */
+
+function toggleReportPeriodControls() {
+  const type = document.getElementById('report-type-select').value;
+  const monthGroup = document.getElementById('group-report-month');
+  const yearGroup = document.getElementById('group-report-year');
+  const startGroup = document.getElementById('group-report-startdate');
+  const endGroup = document.getElementById('group-report-enddate');
+
+  if (type === 'Monthly') {
+    monthGroup.style.display = 'block';
+    yearGroup.style.display = 'block';
+    startGroup.style.display = 'none';
+    endGroup.style.display = 'none';
+  } else if (type === 'Annual') {
+    monthGroup.style.display = 'none';
+    yearGroup.style.display = 'block';
+    startGroup.style.display = 'none';
+    endGroup.style.display = 'none';
+  } else if (type === 'Custom') {
+    monthGroup.style.display = 'none';
+    yearGroup.style.display = 'none';
+    startGroup.style.display = 'block';
+    endGroup.style.display = 'block';
+  }
+
+  calculateAndRenderReport();
+}
+
+function calculateAndRenderReport() {
+  const reportType = document.getElementById('report-type-select').value;
+  const year = document.getElementById('report-year-select').value;
+  const month = document.getElementById('report-month-select').value;
+  const startDate = document.getElementById('report-start-date').value;
+  const endDate = document.getElementById('report-end-date').value;
+  const opexInput = parseFloat(document.getElementById('report-input-opex').value) || 0;
+
+  // Exact Current Timestamp Date and Time
+  const now = new Date();
+  const timeString = now.toLocaleTimeString();
+  const dateString = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const exactTimestamp = `${dateString} at ${timeString}`;
+
+  let periodLabel = "";
+  let filteredItems = storeStock;
+
+  if (reportType === 'Annual') {
+    periodLabel = `Annual Report ${year}`;
+  } else if (reportType === 'Monthly') {
+    periodLabel = `Monthly Report (${month} ${year})`;
+  } else if (reportType === 'Custom') {
+    periodLabel = `Custom Range (${startDate || 'Start'} to ${endDate || 'End'})`;
+    if (startDate || endDate) {
+      filteredItems = storeStock.filter(item => {
+        if (!item.orderedDate) return true;
+        const itemDate = new Date(item.orderedDate);
+        const start = startDate ? new Date(startDate) : new Date('1970-01-01');
+        const end = endDate ? new Date(endDate) : new Date('2099-12-31');
+        return itemDate >= start && itemDate <= end;
+      });
+    }
+  }
+
+  document.getElementById('report-table-title').innerText = `📋 Table of Sales — ${periodLabel}`;
+  document.getElementById('report-chart-title').innerText = `📊 Business Analysis Chart — ${periodLabel}`;
+  document.getElementById('report-timestamp-display').innerText = `🕒 Report Generated: ${exactTimestamp}`;
+
+  let revenue = filteredItems.reduce((sum, item) => sum + ((Number(item.qty) || 0) * (Number(item.price) || 0)), 0);
+  let cogs = filteredItems.reduce((sum, item) => sum + ((Number(item.qty) || 0) * (Number(item.cost) || 0)), 0);
+
+  if (reportType === 'Monthly') {
+    revenue = Math.round(revenue / 12);
+    cogs = Math.round(cogs / 12);
+  }
+
+  const grossProfit = revenue - cogs;
+  const netProfit = grossProfit - opexInput;
+
+  document.getElementById('report-val-revenue').innerText = `LKR ${revenue.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('report-val-cogs').innerText = `LKR ${cogs.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('report-val-grossprofit').innerText = `LKR ${grossProfit.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('report-val-opex').innerText = `LKR ${opexInput.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('report-val-netprofit').innerText = `LKR ${netProfit.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+
+  renderBusinessPieChart(cogs, opexInput, Math.max(0, netProfit));
+
+  lastReportRaw = {
+    reportType,
+    periodLabel,
+    exactTimestamp,
+    revenue,
+    cogs,
+    grossProfit,
+    opex: opexInput,
+    netProfit
+  };
+
+  clearTimeout(reportSyncTimer);
+  reportSyncTimer = setTimeout(() => { syncReportToGoogleSheet(true); }, 600);
+}
+
+function renderBusinessPieChart(cogs, opex, netProfit) {
+  const ctx = document.getElementById('businessPieChart').getContext('2d');
+  if (pieChartInstance) {
+    pieChartInstance.destroy();
+  }
+  pieChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Cost of Goods Sold (COGS)', 'Operating Expenses', 'Net Profit'],
+      datasets: [{
+        data: [cogs, opex, netProfit],
+        backgroundColor: ['#bd2130', '#ffc107', '#28a745']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+}
+
+function clearOldReports() {
+  if (confirm("Are you sure you want to clear old/existing report parameters and reset state?")) {
+    document.getElementById('report-type-select').value = 'Annual';
+    document.getElementById('report-input-opex').value = '250000';
+    
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    document.getElementById('report-start-date').value = firstDay.toISOString().split('T')[0];
+    document.getElementById('report-end-date').value = today.toISOString().split('T')[0];
+
+    lastReportRaw = null;
+    toggleReportPeriodControls();
+    triggerToast("Old reports cleared & parameters reset!");
+  }
+}
+
+function downloadFinancialPDFReport() {
+  if (!lastReportRaw) {
+    calculateAndRenderReport();
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFillColor(16, 30, 43);
+  doc.rect(0, 0, 210, 40, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("ALOKA OPTICIANS — FINANCIAL REPORT", 14, 20);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Period: ${lastReportRaw.periodLabel}`, 14, 28);
+  doc.text(`Generated On: ${lastReportRaw.exactTimestamp}`, 14, 34);
+
+  doc.autoTable({
+    startY: 48,
+    head: [['Financial Description', 'Amount (LKR)']],
+    body: [
+      ['Revenue (Sales)', `LKR ${lastReportRaw.revenue.toLocaleString('en-US', {minimumFractionDigits: 2})}`],
+      ['Cost of Goods Sold (COGS)', `LKR ${lastReportRaw.cogs.toLocaleString('en-US', {minimumFractionDigits: 2})}`],
+      ['Gross Profit', `LKR ${lastReportRaw.grossProfit.toLocaleString('en-US', {minimumFractionDigits: 2})}`],
+      ['Operating Expenses (OPEX)', `LKR ${lastReportRaw.opex.toLocaleString('en-US', {minimumFractionDigits: 2})}`],
+      ['Net Profit (Earnings)', `LKR ${lastReportRaw.netProfit.toLocaleString('en-US', {minimumFractionDigits: 2})}`]
+    ],
+    theme: 'grid',
+    headStyles: { fillColor: [31, 138, 130], textColor: 255 }
+  });
+
+  doc.save(`Aloka_Financial_Report_${new Date().toISOString().slice(0,10)}.pdf`);
+  triggerToast("Financial PDF Report downloaded!");
+}
+
+async function syncReportToGoogleSheet(silent = false) {
+  if (!lastReportRaw) return;
+  if (!silent) triggerToast("Syncing Report to Google Sheet...");
+
+  const payload = {
+    action: "sync_report",
+    reportData: lastReportRaw
+  };
+
+  try {
+    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!silent) triggerToast("Report uploaded to Google Sheet Macro!");
+  } catch (err) {
+    if (!silent) alert("Error syncing report: " + err.toString());
+  }
+}
+
+/* =========================================================
+   NEWS CMS LOGIC
+========================================================= */
+
+function adminSaveNews() {
+  const editId = document.getElementById('editing-news-id').value;
+  const title = document.getElementById('new-news-title').value.trim();
+  const date = document.getElementById('new-news-date').value;
+  const desc = document.getElementById('new-news-desc').value.trim();
+  const fileInput = document.getElementById('new-news-file');
+
+  if (!title) return alert("Article title is required.");
+
+  let media = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=500&q=80";
+  
+  if (editId) {
+    const existing = storeNews.find(n => n.id == editId);
+    if (existing) media = existing.media;
+  }
+
+  const saveNewsItem = (mediaUrl) => {
+    if (editId) {
+      const idx = storeNews.findIndex(n => n.id == editId);
+      if (idx > -1) storeNews[idx] = { ...storeNews[idx], title, date: date || storeNews[idx].date, desc, media: mediaUrl };
+    } else {
+      storeNews.push({ id: Date.now(), title, date: date || new Date().toLocaleDateString(), desc, type: 'image', media: mediaUrl });
+    }
+    localStorage.setItem('aloka_news', JSON.stringify(storeNews));
+    renderWebsiteContent();
+    renderNewsCMSList();
+    resetNewsForm();
+    triggerToast("News article saved!");
+  };
+
+  if (fileInput.files && fileInput.files[0]) {
+    readFileAsDataURL(fileInput.files[0]).then(saveNewsItem);
+  } else {
+    saveNewsItem(media);
+  }
+}
+
+function renderNewsCMSList() {
+  const container = document.getElementById('admin-news-list');
+  container.innerHTML = storeNews.map(n => `
+    <div class="admin-item-row">
+      <img src="${n.media}" class="admin-item-thumb">
+      <div style="flex:1;"><strong>${n.title}</strong><br><small style="color:var(--slate);">${n.date}</small></div>
+      <button onclick="editNews(${n.id})" class="btn btn-ghost btn-sm">Edit</button>
+      <button onclick="deleteNews(${n.id})" class="btn btn-danger btn-sm">Delete</button>
+    </div>
+  `).join('');
+}
+
+function editNews(id) {
+  const item = storeNews.find(n => n.id == id);
+  if (!item) return;
+  document.getElementById('editing-news-id').value = item.id;
+  document.getElementById('new-news-title').value = item.title;
+  document.getElementById('new-news-desc').value = item.desc || '';
+  document.getElementById('save-news-btn').innerText = "💾 Save Article Changes";
+  document.getElementById('cancel-news-btn').style.display = "inline-block";
+}
+
+function resetNewsForm() {
+  document.getElementById('editing-news-id').value = "";
+  document.getElementById('new-news-title').value = "";
+  document.getElementById('new-news-desc').value = "";
+  document.getElementById('new-news-file').value = "";
+  document.getElementById('save-news-btn').innerText = "➕ Publish Article";
+  document.getElementById('cancel-news-btn').style.display = "none";
+}
+
+function deleteNews(id) {
+  storeNews = storeNews.filter(n => n.id != id);
+  localStorage.setItem('aloka_news', JSON.stringify(storeNews));
+  renderWebsiteContent();
+  renderNewsCMSList();
+  triggerToast("Article deleted.");
+}
+
+/* =========================================================
+   FLOATING SPOTLIGHT CMS LOGIC
+========================================================= */
+
+function saveSpotlightSettings() {
+  const tag = document.getElementById('spotlight-tag').value.trim();
+  const title = document.getElementById('spotlight-title').value.trim();
+  const fileInput = document.getElementById('spotlight-file');
+
+  if (tag) storeSpotlight.tag = tag;
+  if (title) storeSpotlight.title = title;
+  storeSpotlight.visible = true;
+
+  if (fileInput.files && fileInput.files[0]) {
+    readFileAsDataURL(fileInput.files[0]).then(url => {
+      storeSpotlight.src = url;
+      storeSpotlight.type = fileInput.files[0].type.includes('video') ? 'video' : 'image';
+      localStorage.setItem('aloka_spotlight', JSON.stringify(storeSpotlight));
+      renderWebsiteContent();
+      triggerToast("Floating spotlight card updated!");
+    });
+  } else {
+    localStorage.setItem('aloka_spotlight', JSON.stringify(storeSpotlight));
+    renderWebsiteContent();
+    triggerToast("Floating spotlight card updated!");
+  }
+}
+
+function removeSpotlightCard() {
+  storeSpotlight.visible = false;
+  localStorage.setItem('aloka_spotlight', JSON.stringify(storeSpotlight));
+  renderWebsiteContent();
+  triggerToast("Spotlight card hidden from homepage.");
+}
+
+/* =========================================================
+   PRODUCT STORE CMS LOGIC
+========================================================= */
+
+function adminAddProduct() {
+  const name = document.getElementById('new-prod-name').value.trim();
+  const price = parseFloat(document.getElementById('new-prod-price').value) || 0;
+  const cat = document.getElementById('new-prod-cat').value;
+  const desc = document.getElementById('new-prod-desc').value.trim();
+  const fileInput = document.getElementById('new-prod-file');
+
+  if (!name || price <= 0) return alert("Product Name and Valid Price are required.");
+
+  const saveProduct = (imgUrl) => {
+    storeProducts.push({ id: Date.now(), name, price, cat, desc, img: imgUrl });
+    localStorage.setItem('aloka_products', JSON.stringify(storeProducts));
+    renderWebsiteContent();
+    renderProductCMSList();
+    triggerToast("Product added to catalog!");
+  };
+
+  if (fileInput.files && fileInput.files[0]) {
+    readFileAsDataURL(fileInput.files[0]).then(saveProduct);
+  } else {
+    saveProduct("https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80");
+  }
+}
+
+function renderProductCMSList() {
+  const container = document.getElementById('admin-product-list');
+  container.innerHTML = storeProducts.map(p => `
+    <div class="admin-item-row">
+      <img src="${p.img}" class="admin-item-thumb">
+      <div style="flex:1;"><strong>${p.name}</strong><br><small>LKR ${p.price.toLocaleString()} | ${p.cat}</small></div>
+      <button onclick="deleteProduct(${p.id})" class="btn btn-danger btn-sm">Delete</button>
+    </div>
+  `).join('');
+}
+
+function deleteProduct(id) {
+  storeProducts = storeProducts.filter(p => p.id != id);
+  localStorage.setItem('aloka_products', JSON.stringify(storeProducts));
+  renderWebsiteContent();
+  renderProductCMSList();
+  triggerToast("Product deleted!");
+}
+
+/* =========================================================
+   SHOWREEL VIDEO CMS LOGIC
+========================================================= */
+
+function adminAddReel() {
+  const title = document.getElementById('new-reel-title').value.trim();
+  const badge = document.getElementById('new-reel-badge').value.trim();
+  const video = document.getElementById('new-reel-video').value.trim();
+
+  if (!title || !video) return alert("Video Title and Video Link are required.");
+
+  storeReels.push({ id: Date.now(), title, badge: badge || 'Featured Video', video });
+  localStorage.setItem('aloka_reels', JSON.stringify(storeReels));
+  renderWebsiteContent();
+  renderReelCMSList();
+  triggerToast("Eyewear Reel video added!");
+}
+
+function renderReelCMSList() {
+  const container = document.getElementById('admin-reel-list');
+  container.innerHTML = storeReels.map(r => `
+    <div class="admin-item-row">
+      <div style="flex:1;"><strong>${r.title}</strong><br><small style="color:var(--slate);">${r.badge}</small></div>
+      <button onclick="deleteReel(${r.id})" class="btn btn-danger btn-sm">Delete</button>
+    </div>
+  `).join('');
+}
+
+function deleteReel(id) {
+  storeReels = storeReels.filter(r => r.id != id);
+  localStorage.setItem('aloka_reels', JSON.stringify(storeReels));
+  renderWebsiteContent();
+  renderReelCMSList();
+  triggerToast("Video reel deleted!");
+}
+
+/* =========================================================
+   HOMEPAGE TEXT & HIGHLIGHTS CMS LOGIC
+========================================================= */
+
+function adminSaveHeroText() {
+  const title = document.getElementById('edit-hero-title').value.trim();
+  const sub = document.getElementById('edit-hero-sub').value.trim();
+
+  if (title) storeHeroTitle = title;
+  if (sub) storeHeroSub = sub;
+
+  localStorage.setItem('aloka_hero_title', storeHeroTitle);
+  localStorage.setItem('aloka_hero_sub', storeHeroSub);
+  renderWebsiteContent();
+  triggerToast("Homepage main text updated!");
+}
+
+function adminAddHighlight() {
+  const title = document.getElementById('new-hl-title').value.trim();
+  const desc = document.getElementById('new-hl-desc').value.trim();
+  const fileInput = document.getElementById('new-hl-file');
+
+  if (!title) return alert("Highlight Title is required.");
+
+  const saveHL = (imgUrl) => {
+    storeHighlights.push({ id: Date.now(), title, desc, img: imgUrl });
+    localStorage.setItem('aloka_highlights', JSON.stringify(storeHighlights));
+    renderWebsiteContent();
+    renderHighlightCMSList();
+    triggerToast("Highlight card added!");
+  };
+
+  if (fileInput.files && fileInput.files[0]) {
+    readFileAsDataURL(fileInput.files[0]).then(saveHL);
+  } else {
+    saveHL("https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80");
+  }
+}
+
+function renderHighlightCMSList() {
+  const container = document.getElementById('admin-highlight-list');
+  container.innerHTML = storeHighlights.map(h => `
+    <div class="admin-item-row">
+      <img src="${h.img}" class="admin-item-thumb">
+      <div style="flex:1;"><strong>${h.title}</strong><br><small style="color:var(--slate);">${h.desc}</small></div>
+      <button onclick="deleteHighlight(${h.id})" class="btn btn-danger btn-sm">Delete</button>
+    </div>
+  `).join('');
+}
+
+function deleteHighlight(id) {
+  storeHighlights = storeHighlights.filter(h => h.id != id);
+  localStorage.setItem('aloka_highlights', JSON.stringify(storeHighlights));
+  renderWebsiteContent();
+  renderHighlightCMSList();
+  triggerToast("Highlight card deleted!");
+}
+</script>
+
+</body>
+</html>
